@@ -16,10 +16,89 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 .blog-items {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 1rem;
+	gap: 2rem;
 }
 
 .blog-item {
 	display: flex;
 	flex-direction: column;
+	transition: all 0.2s ease-in-out;
+}
+
+.blog-item:is(:hover, :focus-within) {
+	transform: scale(1.1);
+}
+
+.blog-item:is(:hover, :focus-within) .blog-item__image {
+	clip-path: polygon(
+		0 0,
+		100% 0,
+		100% 0,
+		100% 100%,
+		100% 100%,
+		0 100%,
+		0 100%,
+		0 0
+	);
+}
+
+.blog-item__image {
+	aspect-ratio: 1;
+	object-fit: cover;
+	clip-path: polygon(
+		30% 0%,
+		70% 0%,
+		100% 30%,
+		100% 70%,
+		70% 100%,
+		30% 100%,
+		0% 70%,
+		0% 30%
+	);
+	transition: all 0.2s ease-in-out;
+}
+
+.blog-item__header {
+	position: relative;
+}
+
+.blog-item__body {
+	background-color: rgba(51, 51, 51, 0.2);
+	padding: 0.5rem;
+	flex: 1;
+}
+
+.blog-item__tags {
+	display: flex;
+	flex-wrap: wrap;
+	position: absolute;
+	inset: 0.25rem;
+	top: auto;
+	gap: 0.25rem;
+	padding: 0.5rem;
+	align-items: flex-end;
+}
+
+.blog-item__categories {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	padding: 0.5rem;
+}
+
+.blog-item__tag,
+.blog-item__category {
+	display: block;
+	background-color: #eaeaea;
+	color: #333;
+	padding: 0.5rem;
+	border-radius: 4px;
+	transition: all 0.5s ease-in-out;
+	border: 2px solid #333;
+	z-index: 1;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.blog-item__tag:is(:hover, :focus) {
 }
