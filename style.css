@@ -15,22 +15,44 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 .blog-items {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(auto-fill, 375px);
 	gap: 2rem;
+	justify-content: center;
 }
 
 .blog-item {
 	display: flex;
 	flex-direction: column;
 	transition: all 0.2s ease-in-out;
+	clip-path: polygon(
+		30% 0%,
+		70% 0%,
+		100% 30%,
+		100% 100%,
+		70% 100%,
+		30% 100%,
+		0 100%,
+		0% 30%
+	);
+	/* filter: drop-shadow(2px 4px 6px black); */
 }
 
 .blog-item:is(:hover, :focus-within) {
-	transform: scale(1.1);
+	/* transform: scale(1.1); */
+	clip-path: polygon(
+		0 0,
+		100% 0,
+		100% 0,
+		100% 100%,
+		70% 100%,
+		30% 100%,
+		0 100%,
+		0 0
+	);
 }
 
 .blog-item:is(:hover, :focus-within) .blog-item__image {
-	clip-path: polygon(
+	/* clip-path: polygon(
 		0 0,
 		100% 0,
 		100% 0,
@@ -39,33 +61,37 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 		0 100%,
 		0 100%,
 		0 0
-	);
+	); */
+	filter: grayscale(0);
 }
 
 .blog-item__image {
 	aspect-ratio: 1;
+	position: relative;
 	object-fit: cover;
-	clip-path: polygon(
-		30% 0%,
-		70% 0%,
-		100% 30%,
-		100% 70%,
-		70% 100%,
-		30% 100%,
-		0% 70%,
-		0% 30%
-	);
+
+	filter: grayscale(0.5);
 	transition: all 0.2s ease-in-out;
 }
 
 .blog-item__header {
 	position: relative;
+
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	overflow: hidden;
+	margin-bottom: -10px;
 }
 
 .blog-item__body {
 	background-color: rgba(51, 51, 51, 0.2);
-	padding: 0.5rem;
+	padding: 1rem;
 	flex: 1;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 }
 
 .blog-item__tags {
@@ -74,7 +100,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	position: absolute;
 	inset: 0.25rem;
 	top: auto;
-	gap: 0.25rem;
+	gap: 0.5rem;
 	padding: 0.5rem;
 	align-items: flex-end;
 }
@@ -82,23 +108,29 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 .blog-item__categories {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.25rem;
-	padding: 0.5rem;
+	gap: 0.5rem;
+	padding: 0.5rem 0;
+	flex: 1;
+	align-items: flex-end;
 }
 
 .blog-item__tag,
 .blog-item__category {
 	display: block;
-	background-color: #eaeaea;
+	background-color: hsla(0, 0%, 92%, 0.5);
 	color: #333;
 	padding: 0.5rem;
 	border-radius: 4px;
-	transition: all 0.5s ease-in-out;
+	transition: all 0.2s ease-in-out;
 	border: 2px solid #333;
 	z-index: 1;
 	font-weight: 700;
 	text-transform: uppercase;
 }
 
-.blog-item__tag:is(:hover, :focus) {
+.blog-item__tag:is(:hover, :focus),
+.blog-item__category:is(:hover, :focus) {
+	transform: scale(1.1);
+	background-color: hsla(0, 0%, 92%, 1);
+	border-color: hsla(0, 0%, 92%, 1);
 }

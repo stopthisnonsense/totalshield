@@ -10,6 +10,20 @@ add_action( 'wp_enqueue_scripts', 'divichild_enqueue_scripts' );
 
 //you can add custom functions below this line:
 
+/* Calculate the estimated reading time for a given piece of $content.
+*
+* @param string $content Content to calculate read time for.
+* @param int $wpm Estimated words per minute of reader.
+*
+* @returns	int $time Estimated reading time.
+*/
+function reading_time( $content = '', $wpm = 250 ) {
+    $clean_content = strip_shortcodes( $content );
+    $clean_content = strip_tags( $clean_content );
+    $word_count = str_word_count( $clean_content );
+    $time = ceil( $word_count / $wpm );
+    return $time;
+}
 
 function blog_shortcode() {
     if( is_home() ) {
@@ -23,6 +37,8 @@ function blog_shortcode() {
                 $item_id = get_the_ID();
                 $item_tags = get_the_tags( '', );
                 $item_permalink = get_the_permalink();
+
+                // We gotta move the tags into an array, clean them of duplicates and construct a template item.
                 if( $item_tags ) {
                     if( !isset( $item_tags_constructed ) ) {
                         $item_tags_constructed = [];
@@ -38,6 +54,8 @@ function blog_shortcode() {
                     $final_item_tags_constructed = implode( $final_item_tags_constructed );
                 }
 
+                //We have to use the function above to construct the time to read.
+                $item_time_to_read = reading_time( get_the_content() );
                 $item_categories = get_the_category();
                 // var_dump( $item_categories );
                 if( $item_categories ) {
@@ -70,7 +88,7 @@ function blog_shortcode() {
 
                 // $item_info_template = "";
 
-                $item_time_read_template = "<div class='blog-item__read blog-item__read--$item_id'>Time to read: 1 min</div>";
+                $item_time_read_template = "<div class='blog-item__read blog-item__read--$item_id'>Time to read: $item_time_to_read min</div>";
 
                 $item_category_template = "<div class='blog-item__categories blog-item__categories--$item_id'>$final_item_categories_constructed</div>";
 
@@ -87,14 +105,17 @@ function blog_shortcode() {
                     <div class='blog-item__body blog-item__body--$item_id'>
                         $item_date_template
                         $item_title_template
-                        $item_time_read_template
                         $item_category_template
+                        $item_time_read_template
                     </div>
                 </div>";
                 $items .= $item_template;
             }
 
-            $templates = "<div class='blog-items'>$items</div>";
+
+            $template_pagination = the_posts_pagination();
+
+            $templates = "<div class='blog-items'>$items</div>$template_pagination";
             return $templates;
         }
     }
