@@ -4,6 +4,8 @@
 function divichild_enqueue_scripts() {
     wp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' );
     wp_enqueue_script( 'custom-js', get_stylesheet_directory_uri() . '/js/scripts.js', array( 'jquery' ));
+    wp_enqueue_script( 'masonry_dependency', 'https://unpkg.com/imagesloaded@4.1.4/imagesloaded.pkgd.min.js', ['jquery'], null, true );
+    wp_register_script( 'gallery_masonry', get_stylesheet_directory_uri() . '/js/masonry.js', ['jquery', 'masonry_dependency'],null, true);
 }
 add_action( 'wp_enqueue_scripts', 'divichild_enqueue_scripts' );
 
@@ -122,3 +124,40 @@ function blog_shortcode() {
 }
 
 add_shortcode( 'blog_shortcode', 'blog_shortcode' );
+
+
+function image_gallery( $atts ) {
+   $atts = shortcode_atts( [
+        'id' => get_the_ID(),
+   ], $atts, 'image_gallery' );
+	ob_start();
+    $gallery = pods( 'photo_gallery', $atts['id'] );
+    if( $gallery ) {
+        $images = $gallery->display( 'images' );
+        $images = explode( ' ', $images );
+        // var_dump( $images );
+        if( !wp_script_is( 'gallery_masonry' )  ) {
+            wp_enqueue_script( 'gallery_masonry' );
+        }
+        ?>
+        <div class="masonry">
+        <?php
+        if( $images ){ ?>
+                <?php foreach( $images as $image ){
+                    $image = attachment_url_to_postid( $image );
+                    ?>
+                    <div class='masonry-item'>
+                    <?php
+                    echo wp_get_attachment_image( $image, 'full','', ['class' => 'masonry-content'] );
+                    ?>
+                    </div>
+
+                <?php } ?>
+        <?php };
+        ?>
+        </div>
+	<?php
+    }
+	return ob_get_clean();
+}
+add_shortcode( 'image_gallery', 'image_gallery' );
