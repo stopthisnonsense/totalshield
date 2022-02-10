@@ -5,12 +5,12 @@ jQuery(document).ready(function ($) {
 		var gallery = item;
 		var selector = item + ' .et_pb_image_wrap';
 		$(selector).each(function (index) {
-			itemIndex = index;
+			var itemIndex = index;
 			$(this).data('slider', index);
 			$(this).on('click', function () {
 				$(selector).removeClass('active');
 				$(this).addClass('active');
-				itemIndex =
+				var itemIndex =
 					' ' +
 					gallery +
 					' .et-pb-controllers a:nth-child(' +

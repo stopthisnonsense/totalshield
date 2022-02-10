@@ -6,9 +6,15 @@ function divichild_enqueue_scripts() {
     wp_enqueue_script( 'custom-js', get_stylesheet_directory_uri() . '/js/scripts.js', array( 'jquery' ), null, true);
     wp_enqueue_script( 'masonry_dependency', 'https://unpkg.com/imagesloaded@4.1.4/imagesloaded.pkgd.min.js', ['jquery'], null, true );
     wp_register_script( 'gallery_masonry', get_stylesheet_directory_uri() . '/js/masonry.js', ['jquery', 'masonry_dependency'],null, true);
+
 }
 add_action( 'wp_enqueue_scripts', 'divichild_enqueue_scripts' );
 
+function register_slick_carousel() {
+    wp_register_script( 'slick-js', 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js', ['jquery'], null, true );
+    wp_register_style( 'slick-css', 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css', [], null );
+}
+add_action( 'wp_enqueue_scripts', 'register_slick_carousel' );
 
 //you can add custom functions below this line:
 
@@ -177,3 +183,53 @@ function relation_pod_gallery( $atts ) {
 
 
 add_shortcode( 'photo_gallery', 'relation_pod_gallery' );
+
+
+function hero_slideshow() {
+    $slider = pods( 'home_hero' );
+    if( $slider ) {
+        if( !wp_script_is( 'slick-js' )  ) {
+            wp_enqueue_script( 'slick-js' );
+            wp_add_inline_script( 'slick-js', "jQuery('.slick').slick(
+                {
+                    fade: true,
+                    cssEase: 'linear',
+                    autoplay: true,
+                    autoplaySpeed: 2000,
+                    arrows: false,
+                }
+            )" );
+        }
+        if( !wp_style_is( 'slick-css' ) ) {
+            wp_enqueue_style( 'slick-css' );
+        }
+        $images = $slider->display( 'background_images' );
+        $images = $images = explode( ' ', $images );
+        $text = $slider->display( 'hero_text' );
+        // var_dump( $slider->fetch( 'hero_text' ) );
+        $description_template = "$text";
+        foreach( $images as $image ) {
+            $image_template = '';
+            $image = attachment_url_to_postid( $image );
+            $image_template = wp_get_attachment_image( $image, 'full','', ['class' => "slick__image hero__image slick__image--$image hero__image--$image"] );
+            $image_templates .= $image_template;
+        }
+
+        $slider_constructor = "
+            <div class='hero'>
+                <div class='hero__description'>
+                    $description_template
+                </div>
+
+                <div class='slick hero__slick'>
+                    $image_templates
+                </div>
+            </div>
+        ";
+
+        // var_dump( $slider_constructor );
+        return $slider_constructor;
+    }
+}
+
+add_shortcode( 'hero_slideshow', 'hero_slideshow' );
