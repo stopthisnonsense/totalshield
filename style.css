@@ -134,3 +134,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 	background-color: hsla(0, 0%, 92%, 1);
 	border-color: hsla(0, 0%, 92%, 1);
 }
+:root {
+	counter-reset: masonry;
+}
+.masonry {
+	display: grid;
+	grid-gap: 10px;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	grid-auto-rows: 0;
+}
