@@ -142,7 +142,7 @@ function image_gallery( $atts ) {
         ?>
         <div class="masonry">
         <?php
-        if( $images ){ ?>
+        if( is_array($images) ){ ?>
                 <?php foreach( $images as $image ){
                     $image = attachment_url_to_postid( $image );
                     ?>
@@ -161,3 +161,20 @@ function image_gallery( $atts ) {
 	return ob_get_clean();
 }
 add_shortcode( 'image_gallery', 'image_gallery' );
+
+
+function relation_pod_gallery( $atts ) {
+    $atts = shortcode_atts( [
+        'id' => get_the_ID(),
+    ], $atts, 'relation_pod' );
+    $gallery = pods( 'product', $atts['id'] );
+    $gallery = get_page_by_title($gallery->display( 'gallery' ), OBJECT, 'photo_gallery');
+    $gallery_id = $gallery->ID;
+    // var_dump( $gallery_id );
+    if( $gallery && $gallery_id ) {
+       $gallery_shortcode = do_shortcode( "[image_gallery id=$gallery_id]" );
+    }
+    return $gallery_shortcode;
+}
+
+add_shortcode( 'photo_gallery', 'relation_pod_gallery' );
